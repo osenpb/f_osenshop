@@ -1,33 +1,65 @@
 <section class="max-w-7xl mx-auto px-6 py-8">
 
-  {{cargarProductos()}}
   @if (isLoading()) {
-    <div class="flex justify-center py-10">
-      <app-loading-spinner  />
-    </div>
+  <div class="flex justify-center py-10">
+    <app-loading-spinner />
+  </div>
   }
 
   @else if (error()) {
-    <div class="bg-red-100 text-red-700 px-4 py-3 rounded mb-6">
-      Ocurrió un error al cargar los productos.
-    </div>
+  <div class="bg-red-100 text-red-700 px-4 py-3 rounded mb-6">
+    Ocurrió un error al cargar los productos.
+  </div>
   }
 
-  @else if (products().length === 0) {
-    <div class="text-center text-gray-500 py-10">
-      No hay productos disponibles.
-    </div>
+  @else if ((products().length) === 0) {
+  <div class="text-center text-gray-500 py-10">
+    No hay productos disponibles.
+  </div>
   }
 
   @else {
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
 
-      @for (product of products(); track product.id) {
-       <app-product-card [product]="product"/>
-      }
+    @for (product of products(); track product.id) {
+    <app-product-card [product]="product" />
+    }
 
-    </div>
+  </div>
   }
+<div class="flex items-center justify-center gap-6 mt-10 py-6 bg-black border border-white/10 rounded-2xl shadow-2xl">
 
-</section>
+  <button
+    (click)="prevPage()"
+    [disabled]="page() === 0"
+    class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-widest transition-all duration-300
+           enabled:bg-white enabled:text-black enabled:hover:bg-gray-200
+           disabled:bg-transparent disabled:text-gray-600 disabled:border disabled:border-gray-800 disabled:cursor-not-allowed">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Anterior
+  </button>
+
+  <div class="flex flex-col items-center">
+    <span class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-1">Navegación</span>
+    <span class="text-sm font-light text-gray-400">
+      <span class="text-white font-bold">{{ page() + 1 }}</span>
+      <span class="mx-2 text-gray-700">/</span>
+      <span>{{ productResource.value()?.page?.totalPages || 1 }}</span>
+    </span>
+  </div>
+
+  <button
+    (click)="nextPage()"
+    [disabled]="page() + 1 >= (productResource.value()?.page?.totalPages || 1)"
+    class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-widest transition-all duration-300
+           enabled:bg-white enabled:text-black enabled:hover:bg-gray-200
+           disabled:bg-transparent disabled:text-gray-600 disabled:border disabled:border-gray-800 disabled:cursor-not-allowed">
+    Siguiente
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    </svg>
+  </button>
+
+</div>

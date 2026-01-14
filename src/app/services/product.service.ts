@@ -5,6 +5,7 @@ import { ProductResponse } from '../product/interfaces/product-response.interfac
 import { ProductRequest } from '../product/interfaces/product-request.interface';
 import { UpdateProductRequest } from '../product/interfaces/update-product-request';
 import { environment } from '../../environments/environment';
+import { PageResponse } from '../product/interfaces/page-response.interface';
 
 
 @Injectable({
@@ -15,10 +16,13 @@ export class ProductService {
   private readonly baseUrl = `${environment.apiUrl}/products`;
   private http = inject(HttpClient);
 
-  getAllProducts() {
+  getProducts() {
     return this.http.get<ProductResponse[]>(`${this.baseUrl}`);
   }
 
+  getProductsPageable(page: number, size: number) {
+    return this.http.get<PageResponse<ProductResponse>>(`${this.baseUrl}/pageable`, { params: { page, size } });
+  }
   getProductById(id: number) {
     return this.http.get<ProductResponse>(`${this.baseUrl}/${id}`);
   }

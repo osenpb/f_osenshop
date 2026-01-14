@@ -4,8 +4,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 
 import { DecimalPipe } from '@angular/common';
 import { EditProductModalComponent } from "../edit-product-modal.component/edit-product-modal.component";
-import { ProductResponse } from '../../../product/interfaces/product-response.interface';
+
 import { LoadingSpinnerComponent } from "../../../home/components/loading-spinner/loading-spinner.component";
+import { PageResponse } from '../../../product/interfaces/page-response.interface';
+import { ProductResponse } from '../../../product/interfaces/product-response.interface';
 
 @Component({
   selector: 'app-admin-product-list',
@@ -18,26 +20,24 @@ export class ProductListComponent {
   private ProductService = inject(ProductService);
 
   selectedProductId = signal<number | null>(null);
-
-
+  page = signal<number>(0);
+  size = signal<number>(10);
 
   productoResource = rxResource<ProductResponse[], void>({
-    stream: () => this.ProductService.getAllProducts(),
+    stream: () => this.ProductService.getProducts(),
   })
 
-  products = computed<ProductResponse[]>(() => {
-    return this.productoResource.value() ?? [];
-  })
+  products = computed(() => this.productoResource.value() ?? []);
 
-  isLoading = computed<boolean>(() => this.productoResource.isLoading());
-  error = computed(() => this.productoResource.error());
+  isLoading = this.productoResource.isLoading();
+  error = this.productoResource.error();
 
-  onEdit(id: number){
+  onEdit(id: number) {
     console.log(id);
     this.isEditModalOpen.set(true);
     this.selectedProductId.set(id);
   }
-  onDelete(id: number){
+  onDelete(id: number) {
 
   }
 
@@ -51,9 +51,9 @@ export class ProductListComponent {
   }
 
   onProductUpdated() {
-  this.productoResource.reload();
-  this.closeModal();
-}
+    this.productoResource.reload();
+    this.closeModal();
+  }
 
 }
 
