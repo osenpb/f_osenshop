@@ -46,13 +46,13 @@
     <span class="text-sm font-light text-gray-400">
       <span class="text-white font-bold">{{ page() + 1 }}</span>
       <span class="mx-2 text-gray-700">/</span>
-      <span>{{ productResource.value()?.page?.totalPages || 1 }}</span>
+      <span>{{ pageInfo().totalPages || 1 }}</span>
     </span>
   </div>
 
   <button
     (click)="nextPage()"
-    [disabled]="page() + 1 >= (productResource.value()?.page?.totalPages || 1)"
+    [disabled]="page() + 1 >= (pageInfo().totalPages || 1)"
     class="flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-widest transition-all duration-300
            enabled:bg-white enabled:text-black enabled:hover:bg-gray-200
            disabled:bg-transparent disabled:text-gray-600 disabled:border disabled:border-gray-800 disabled:cursor-not-allowed">

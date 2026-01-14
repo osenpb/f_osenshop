@@ -27,41 +27,25 @@ export class ProductListComponent {
   }
 
   private productService = inject(ProductService);
-  page = signal(0);
-  size = signal(6);
+  page = this.productService.page;
+  size = this.productService.size;
 
-  productResource = rxResource<PageResponse<ProductResponse>, { page: number; size: number }>({
-    params: () => ({
-      page: this.page(),
-      size: this.size(),
-    }),
-    stream: ({ params }) => {
-      return this.productService.getProductsPageable(
-        params.page,
-        params.size
-      )
-    }
-  });
-
-  // productResource - signal handling
-products = computed<ProductResponse[]>(() => {
-  const data = this.productResource.value();
-  return data?.content ?? [];
-});
-
-
-  isLoading = this.productResource.isLoading;
-  error = this.productResource.error;
+  products = this.productService.products;
+  isLoading = this.productService.isLoading;
+  error = this.productService.error;
+  pageInfo = this.productService.pageInfo;
 
 
   prevPage() {
-    const current = this.productResource.value()?.page.number ?? 0;
+
+    const current = this.pageInfo().number ?? 0;
+    // const current = this.productService.productResource.value()?.page.number ?? 0;
     if (current > 0) this.page.set(current - 1);
   }
 
   nextPage() {
-    const current = this.productResource.value()?.page.number ?? 0;
-    const total = this.productResource.value()?.page.totalPages ?? 1;
+    const current = this.pageInfo()?.number ?? 0;
+    const total = this.pageInfo()?.totalPages ?? 1;
     if (current + 1 < total) this.page.set(current + 1);
   }
 
