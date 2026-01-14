@@ -16,7 +16,7 @@ type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 export class AuthService {
 
   // API base url
-  private readonly baseUrl = `${environment.apiUrl}/auth`; // esto ponerlo en el .env
+  private readonly baseUrl = `${environment.apiUrl}/auth`;
 
   // HttpClient
   private http = inject(HttpClient);
@@ -51,7 +51,6 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, loginRequest)
       .pipe(
         tap(resp => this.handleAuthSuccess(resp)),
-        // catchError((error: any) => this.handleError(error))
         catchError((error: HttpErrorResponse) => {
           let message = 'Error al iniciar sesión';
 
