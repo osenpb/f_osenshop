@@ -51,7 +51,7 @@
           s/.{{ product()!.price | number:'1.2-2' }}
         </p>
 
-        <div class="h-[1px] w-full bg-zinc-900 mb-8"></div>
+        <div class="h-px w-full bg-zinc-900 mb-8"></div>
 
         <div class="mb-10">
           <h3 class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-3 font-bold">Descripción</h3>
@@ -63,11 +63,9 @@
         <div class="flex flex-col gap-4 mb-10">
           <h3 class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Seleccionar Cantidad</h3>
           <div class="flex items-center border border-zinc-800 w-fit rounded-full p-1 bg-zinc-950">
-            <button
-              (click)="decrease()"
-              [disabled]="!canAddMore()"
-
-              class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-900 transition-colors text-zinc-400 hover:text-white">
+            <button (click)="decrease()" [disabled]="quantity() <= 1" class="w-10 h-10 flex items-center justify-center rounded-full
+         hover:bg-zinc-900 transition-colors text-zinc-400 hover:text-white
+         disabled:opacity-40">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
@@ -75,17 +73,11 @@
             </button>
 
             <input #qty type="number" class="w-12 text-center bg-transparent border-none focus:ring-0 text-sm font-bold"
-              [value]="quantity()"
-              (input)="setQuantity(qty.valueAsNumber)"
-              [disabled]="!canAddMore()"
+              [value]="quantity()" (input)="setQuantity(qty.valueAsNumber)" [disabled]="!canAddMore()" min="0" />
 
-              />
-
-            <button
-              (click)="increase()"
-              [disabled]="!canAddMore()"
-
-              class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-zinc-900 transition-colors text-zinc-400 hover:text-white">
+            <button (click)="increase()" [disabled]="!canAddSelectedQuantity()" class="w-10 h-10 flex items-center justify-center rounded-full
+         hover:bg-zinc-900 transition-colors text-zinc-400 hover:text-white
+         disabled:opacity-40">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -95,25 +87,17 @@
         </div>
 
         <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-zinc-900">
-          <button
-          (click)="addToCart()"
-          [disabled]="isAddingToCart()|| !canAddSelectedQuantity() "
-            class="flex-1 bg-white text-black h-14 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-zinc-200 transition-all active:scale-95 disabled:opacity-50">
-            @if(isAddingToCart()) {
-                  Producto agregado
-            }
-            @if (!canAddMore()) {
-            <p class="text-xs text-red-400 mt-2">
-              Ya alcanzaste el stock máximo disponible
-            </p>
-            } @else{
-              Producto agregado
-            }
-          </button>
+          <button (click)="addToCart()" [disabled]="isAddingToCart() || !canAddSelectedQuantity()" class="flex-1 bg-white text-black h-14 rounded-full font-bold uppercase tracking-widest text-xs
+         hover:bg-zinc-200 transition-all active:scale-95 disabled:opacity-50 disabled:text-black">
 
-          <button
-            class="flex-1 border border-zinc-800 h-14 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-zinc-900 transition-all active:scale-95">
-            Comprar Ahora
+            @if (isAddingToCart()) {
+            Producto agregado
+            } @else if (!canAddMore()) {
+            Stock máximo alcanzado
+            } @else {
+            Agregar al carrito
+            }
+
           </button>
         </div>
 

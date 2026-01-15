@@ -1,20 +1,43 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ProductService } from '../../../services/product.service';
 
 @Component({
   selector: 'app-product-search-by-word',
   imports: [],
-  template: `
+   template: `
     <input
-    type="text"
-    placeholder="BUSCAR PRODUCTO..."
-    class="w-full bg-zinc-[#f2f2f2] border border-zinc-900 rounded-full py-3 pl-12 pr-4 text-[10px] tracking-[0.2em] text-black placeholder-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-800 transition-all duration-500 font-mono uppercase"
-  >
+      #input
+      type="text"
+      placeholder="BUSCAR PRODUCTO..."
+      (keyup.enter)="searchProducts(input.value)"
+      class="w-full bg-zinc-[#f2f2f2] border border-zinc-900 rounded-full
+             py-3 pl-12 pr-4 text-[10px] tracking-[0.2em] text-black
+             placeholder-zinc-700 focus:outline-none focus:ring-1
+             focus:ring-zinc-800 transition-all duration-500
+             font-mono uppercase"
+    />
 
-
+    <button (click)="searchProducts(input.value)">
+      Buscar
+    </button>
   `,
-  //templateUrl: './search-by-word.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchByWordComponent {
+
+
+  private productService = inject(ProductService);
+
+
+  // signal compartido con el service
+  products = this.productService.products;
+  search = this.productService.search;
+  page = this.productService.page;
+
+
+  searchProducts(value: string) {
+    this.page.set(0);          // reset paginación
+    this.search.set(value);    // dispara el resource
+  }
 
 }

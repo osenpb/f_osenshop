@@ -35,6 +35,7 @@ export class ProductListComponent {
   error = this.productService.error;
   pageInfo = this.productService.pageInfo;
 
+  emptySearchMessage = this.productService.emptySearchMessage;
 
   prevPage() {
 

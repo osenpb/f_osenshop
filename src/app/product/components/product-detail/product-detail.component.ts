@@ -8,6 +8,8 @@ import { NotificationService } from '../../../services/notification.service';
 import { DecimalPipe } from '@angular/common';
 import { AddedToCartModalComponent } from "../../../cart/components/added-to-cart-modal.component/added-to-cart-modal.component";
 import { LoadingSpinnerComponent } from "../../../home/components/loading-spinner/loading-spinner.component";
+import { AuthService } from '../../../services/auth.service';
+import { switchMap, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-home-product-detail',
@@ -18,11 +20,13 @@ import { LoadingSpinnerComponent } from "../../../home/components/loading-spinne
 export class ProductDetailComponent {
 
   private productService = inject(ProductService);
+  private authService = inject(AuthService);
 
   private route = inject(ActivatedRoute);
   private cartService = inject(CartService);
   private notification = inject(NotificationService);
   public Math = Math;
+
 
   // Signals
   quantity = signal(1);
@@ -34,8 +38,14 @@ export class ProductDetailComponent {
   });
 
   productResource = rxResource<ProductResponse, void>({
-    stream: () => this.productService.getProductById(this.productId()
-    ),
+    stream: () => {
+      const id = this.productId();
+      // Si el ID es inválido, no hacer la petición
+      if (!id || id <= 0 || isNaN(id)) {
+        return EMPTY;
+      }
+      return this.productService.getProductById(id);
+    }
   });
 
   product = computed(() => {
@@ -44,6 +54,8 @@ export class ProductDetailComponent {
 
   error = computed(() => this.productResource.error());
   isLoading = computed(() => this.productResource.isLoading());
+
+  isAuthenticated = this.authService.isAuthenticated;
 
   canAddMore = computed(() => {
   const product = this.product();
@@ -77,7 +89,6 @@ export class ProductDetailComponent {
 
 
   // CartService actions
-
   isAddingToCart = signal(false); // for handling cart adding
 
   addToCart() { // I can implement exhaustMap pipe here, in other moment
