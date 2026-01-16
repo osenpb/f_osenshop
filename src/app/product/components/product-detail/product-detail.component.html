@@ -59,7 +59,7 @@
             {{ product()!.description }}
           </p>
         </div>
-
+   @if (isAuthenticated()) {
         <div class="flex flex-col gap-4 mb-10">
           <h3 class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold">Seleccionar Cantidad</h3>
           <div class="flex items-center border border-zinc-800 w-fit rounded-full p-1 bg-zinc-950">
@@ -73,7 +73,8 @@
             </button>
 
             <input #qty type="number" class="w-12 text-center bg-transparent border-none focus:ring-0 text-sm font-bold"
-              [value]="quantity()" (input)="setQuantity(qty.valueAsNumber)" [disabled]="!canAddMore()" min="0" [max]="product()!.stock" />
+              [value]="quantity()" (input)="setQuantity(qty.valueAsNumber)" [disabled]="!canAddMore()" min="0"
+              [max]="product()!.stock" />
 
             <button (click)="increase()" [disabled]="!canAddSelectedQuantity()" class="w-10 h-10 flex items-center justify-center rounded-full
          hover:bg-zinc-900 transition-colors text-zinc-400 hover:text-white
@@ -97,9 +98,32 @@
             } @else {
             Agregar al carrito
             }
-
           </button>
         </div>
+
+        }@else {
+        <div class="flex flex-col items-center gap-4 pt-6 border-t border-zinc-900">
+          <div
+            class="flex items-center gap-3 px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-2xl w-full justify-center group transition-all hover:border-zinc-700">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 text-zinc-500 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <p
+              class="text-[10px] uppercase tracking-[0.2em] text-zinc-500 font-bold group-hover:text-zinc-300 transition-colors">
+              Debes iniciar sesión para comprar
+            </p>
+          </div>
+
+          <a
+            routerLink="/auth/login"
+            class="text-[11px] text-zinc-500 hover:text-white underline underline-offset-8 transition-colors uppercase tracking-widest cursor-pointer">
+            Ir al Login
+          </a>
+        </div>
+        }
 
         <div class="mt-12 grid grid-cols-2 gap-4">
           <div class="flex items-center gap-3 p-4 border border-zinc-900 rounded-2xl">

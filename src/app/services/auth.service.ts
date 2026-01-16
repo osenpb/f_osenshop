@@ -24,7 +24,7 @@ export class AuthService {
   // === PRIVATE STATES ===
   private _user = signal<UserResponse | null>(null);
   private _authStatus = signal<AuthStatus>('checking');
-  private _token = signal<string | null>(localStorage.getItem('token'));
+  private _token = signal<string | null>(localStorage.getItem('token') ?? null);
 
 
   // === PUBLIC STATES ===
@@ -34,13 +34,18 @@ export class AuthService {
     else return 'not-authenticated';
   });
 
-  isAuthenticated = computed(() => this._authStatus() === 'authenticated');
+  isAuthenticated = computed(() => !!this._user() && !!this._token() && this._authStatus() === 'authenticated');
   user = computed<UserResponse | null>(() => this._user());
   token = computed<string | null>(() => this._token());
 
   checkStatusResource = rxResource({
     stream: () => this.checkStatus(),
   });
+
+  constructor() {
+    // Initialize auth status check on service creation
+    this.checkStatus().subscribe();
+  }
 
 
   register(registerRequest: RegisterRequest) {
@@ -86,13 +91,16 @@ export class AuthService {
   // check if there is a token in local storage and validate it
   checkStatus(): Observable<boolean> {
 
-    //const token = localStorage.getItem('token');
-    const token = this._token();
+    const token = this._token() || localStorage.getItem('token');
 
     if (!token) {
       this._authStatus.set('not-authenticated');
-      this.logout();
       return of(false);
+    }
+
+    // If token exists in localStorage but not in signal, set it
+    if (!this._token() && token) {
+      this._token.set(token);
     }
 
     return this.http
@@ -100,13 +108,14 @@ export class AuthService {
       .pipe(
         tap(resp => this.handleAuthSuccess(resp)),
         map(() => true),
-        catchError((error: any) => this.handleError(error))
+        catchError((error: any) => {
+          // Only logout if it's a 401/403, otherwise keep the token
+          if (error.status === 401 || error.status === 403) {
+            this.logout();
+          }
+          return of(false);
+        })
       );
-  }
-
-  private handleError(error: any) {
-    this.logout();
-    return of(false);
   }
 
   private handleAuthSuccess(resp: AuthResponse): boolean {

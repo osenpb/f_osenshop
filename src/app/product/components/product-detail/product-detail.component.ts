@@ -1,4 +1,4 @@
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
 import { ProductResponse } from '../../interfaces/product-response.interface';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -13,7 +13,7 @@ import { switchMap, EMPTY } from 'rxjs';
 
 @Component({
   selector: 'app-home-product-detail',
-  imports: [DecimalPipe, LoadingSpinnerComponent],
+  imports: [DecimalPipe, LoadingSpinnerComponent, RouterLink],
   templateUrl: './product-detail.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -127,6 +127,8 @@ export class ProductDetailComponent {
   }
 
 
-
+  showAuth(){
+    console.log("AUTHENTICACION:", this.authService.isAuthenticated);
+  }
 
 }

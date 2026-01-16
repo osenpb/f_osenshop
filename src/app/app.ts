@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
 
@@ -9,5 +9,8 @@ import { AuthService } from './services/auth.service';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('ecommerce_frontend_angular');
+  protected readonly title = signal('Osen Shop');
+
+  // Inject AuthService to initialize auth check on app startup
+  private authService = inject(AuthService);
 }
