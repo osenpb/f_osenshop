@@ -19,7 +19,7 @@ export class ProductService {
   private http = inject(HttpClient);
 
   page = signal(0);
-  size = signal(6);
+  size = signal(9);
 
   search = signal<string | null>(null);
 
