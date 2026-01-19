@@ -36,6 +36,13 @@ export class CartService {
     )
   );
 
+  readonly totalQuantity = computed(() =>
+    this.cartItems().reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    )
+  );
+
   // === ACTIONS ===
   removeFromCart(productId: number) {
     this.http

@@ -21,10 +21,11 @@ interface ProductPageRequest {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductListComponent {
+
+
+
+
   totalPages: any;
-  loadProducts() {
-    throw new Error('Method not implemented.');
-  }
 
   private productService = inject(ProductService);
   page = this.productService.page;
@@ -40,7 +41,6 @@ export class ProductListComponent {
   prevPage() {
 
     const current = this.pageInfo().number ?? 0;
-    // const current = this.productService.productResource.value()?.page.number ?? 0;
     if (current > 0) this.page.set(current - 1);
   }
 
@@ -49,6 +49,8 @@ export class ProductListComponent {
     const total = this.pageInfo()?.totalPages ?? 1;
     if (current + 1 < total) this.page.set(current + 1);
   }
+;
+
 
 }
 

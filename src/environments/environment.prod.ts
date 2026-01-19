@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://osen-shop-v1-0.onrender.com/api/v1'
+  apiUrl: 'https://osenshop-production.up.railway.app/api/v1'
 };

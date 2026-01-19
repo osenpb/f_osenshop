@@ -26,11 +26,11 @@ export class ProductService {
   // === RESOURCE ===
 
 
-  productResource = rxResource<PageResponse<ProductResponse>, { page: number; size: number; search: string }>({
+  productResource = rxResource<PageResponse<ProductResponse>, { page: number; size: number; search: string | null }>({
   params: () => ({
     page: this.page(),
     size: this.size(),
-    search: this.search() ?? '',
+    search: this.search(),
   }),
   stream: ({ params }) => {
 

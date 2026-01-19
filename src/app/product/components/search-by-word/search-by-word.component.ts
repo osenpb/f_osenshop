@@ -36,8 +36,14 @@ export class SearchByWordComponent {
 
 
   searchProducts(value: string) {
-    this.page.set(0);          // reset paginación
-    this.search.set(value);    // dispara el resource
+    const normalized = value.trim();
+      this.page.set(0);
+
+        if (normalized === '') {
+          this.search.set(null); // ← vuelve a listado completo
+        } else {
+          this.search.set(normalized);
+        }
   }
 
 }

@@ -19,10 +19,15 @@
             Resumen del pedido
           </h2>
 
-          <div class="flex justify-between text-sm text-neutral-500">
-            <span>Subtotal</span>
-            <span>s/.{{ cartService.total() }}</span>
-          </div>
+           <div class="flex justify-between text-sm text-neutral-500">
+             <span>Productos</span>
+             <span>{{ cartService.totalQuantity() }}</span>
+           </div>
+
+           <div class="flex justify-between text-sm text-neutral-500">
+             <span>Subtotal</span>
+             <span>s/.{{ cartService.total() }}</span>
+           </div>
 
           <div
             class="
