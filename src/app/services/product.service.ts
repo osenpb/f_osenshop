@@ -2,7 +2,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { ProductResponse } from '../product/interfaces/product-response.interface';
-import { ProductRequest } from '../product/interfaces/product-request.interface';
+import { CreateProductRequest } from '../product/interfaces/product-request.interface';
 import { UpdateProductRequest } from '../product/interfaces/update-product-request';
 import { environment } from '../../environments/environment';
 import { PageInfo, PageResponse } from '../product/interfaces/page-response.interface';
@@ -24,7 +24,6 @@ export class ProductService {
   search = signal<string | null>(null);
 
   // === RESOURCE ===
-
 
   productResource = rxResource<PageResponse<ProductResponse>, { page: number; size: number; search: string | null }>({
   params: () => ({
@@ -132,7 +131,7 @@ export class ProductService {
 
   }
 
-  createProduct(product: ProductRequest) {
+  createProduct(product: CreateProductRequest) {
     return this.http.post<ProductResponse>(`${this.baseUrl}`, product);
   }
 

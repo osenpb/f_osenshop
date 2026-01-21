@@ -1,4 +1,4 @@
-export interface ProductRequest {
+export interface CreateProductRequest {
   name: string;
   description: string;
   price: number;

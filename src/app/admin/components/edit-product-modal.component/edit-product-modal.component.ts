@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, inject, input, output, computed, si
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ProductResponse } from '../../../product/interfaces/product-response.interface';
 import { CategoryResponse } from '../../../product/interfaces/category-response.interface';
-import { ProductRequest } from '../../../product/interfaces/product-request.interface';
+import { CreateProductRequest } from '../../../product/interfaces/product-request.interface';
 import { UpdateProductRequest } from '../../../product/interfaces/update-product-request';
 
 
@@ -59,6 +59,12 @@ export class EditProductModalComponent {
           description: '',
           isActive: true,
         });
+
+        // Set default category to first available category if loaded
+        const cats = this.categories();
+        if (cats && cats.length > 0) {
+          this.editForm.patchValue({ categoryId: +cats[0].id });
+        }
         return;
       }
 
@@ -67,12 +73,12 @@ export class EditProductModalComponent {
 
       this.editForm.patchValue({
         name: product.name,
-        imageUrl: product.imageUrl,
-        categoryId: +product.category.id,
+        description: product.description,
         price: product.price,
         stock: product.stock,
-        description: product.description,
         isActive: product.isActive,
+        imageUrl: product.imageUrl,
+        categoryId: +product.category.id,
       });
     });
   }
@@ -101,24 +107,28 @@ export class EditProductModalComponent {
     const editFormControls = this.editForm.controls;
 
     if (this.mode() === 'add') {
-      const payload: ProductRequest = {
+      const payload: CreateProductRequest = {
         name: editFormControls.name.value,
         imageUrl: editFormControls.imageUrl.value,
-        categoryId: editFormControls.categoryId.value,
-        price: editFormControls.price.value,
-        stock: editFormControls.stock.value,
+        categoryId: Number(editFormControls.categoryId.value),
+        price: Number(editFormControls.price.value),
+        stock: Number(editFormControls.stock.value),
         description: editFormControls.description.value,
         isActive: editFormControls.isActive.value,
       };
 
+      console.log('Creating product with payload:', payload);
+
       this.productService
         .createProduct(payload)
         .subscribe({
-          next: () => {
+          next: (response) => {
             this.closeModal();
             this.saved.emit();
           },
-          error: (err) => console.error(err),
+          error: (err) => {
+            // Handle error
+          },
         });
     } else {
       const payload: UpdateProductRequest = {
@@ -147,5 +157,4 @@ export class EditProductModalComponent {
   closeModal() {
     this.close.emit();
   }
-
 }
