@@ -24,6 +24,7 @@ export class EditProductModalComponent {
   open = input<boolean>(false);
   close = output<void>();
   productId = input<number>(0);
+  mode = input<'edit' | 'add'>('edit');
   saved = output<void>();
 
 
@@ -40,14 +41,27 @@ export class EditProductModalComponent {
 
   productResource = rxResource<ProductResponse | null, number>({
     params: () => this.productId(),
-    stream: ({ params }) =>
-      this.productService.getProductById(params),
+    stream: ({ params }) => this.productService.getProductById(params),
     defaultValue: null,
   });
 
-  // Cargar los datos del producto en el formulario
+  // Cargar los datos del producto en el formulario (solo en modo edit)
   constructor() {
     effect(() => {
+      if (this.mode() === 'add') {
+        // Reset form for adding new product
+        this.editForm.reset({
+          name: '',
+          imageUrl: '',
+          categoryId: 0,
+          price: 0,
+          stock: 0,
+          description: '',
+          isActive: true,
+        });
+        return;
+      }
+
       const product = this.product();
       if (!product) return;
 
@@ -68,7 +82,6 @@ export class EditProductModalComponent {
     stream: () => this.categoryService.getAllCategories(),
   }
   );
-
   categories = computed(() => {
     return this.categoryResource.value();
   })
@@ -81,34 +94,54 @@ export class EditProductModalComponent {
   });
 
   onSave() {
-  if (this.editForm.invalid) {
-    this.editForm.markAllAsTouched();
-    return;
-  }
-  const editFormControls = this.editForm.controls;
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+    const editFormControls = this.editForm.controls;
 
-  const payload: UpdateProductRequest = {
-    id: this.productId(),
-    name: editFormControls.name.value,
-    imageUrl: editFormControls.imageUrl.value,
-    categoryId: editFormControls.categoryId.value,
-    price:editFormControls.price.value,
-    stock: editFormControls.stock.value,
-    description: editFormControls.description.value,
-    isActive: editFormControls.isActive.value,
-  };
+    if (this.mode() === 'add') {
+      const payload: ProductRequest = {
+        name: editFormControls.name.value,
+        imageUrl: editFormControls.imageUrl.value,
+        categoryId: editFormControls.categoryId.value,
+        price: editFormControls.price.value,
+        stock: editFormControls.stock.value,
+        description: editFormControls.description.value,
+        isActive: editFormControls.isActive.value,
+      };
 
-  console.log(payload.id);
-  console.log(payload.categoryId);
-  this.productService
-    .updateProduct(this.productId(), payload)
-    .subscribe({
-      next: () => {
-        this.closeModal()
-        this.saved.emit(); // para avisar al padre del modal que se ha guardado :)
-      },
-      error: (err) => console.error(err),
-    });
+      this.productService
+        .createProduct(payload)
+        .subscribe({
+          next: () => {
+            this.closeModal();
+            this.saved.emit();
+          },
+          error: (err) => console.error(err),
+        });
+    } else {
+      const payload: UpdateProductRequest = {
+        id: this.productId(),
+        name: editFormControls.name.value,
+        imageUrl: editFormControls.imageUrl.value,
+        categoryId: editFormControls.categoryId.value,
+        price: editFormControls.price.value,
+        stock: editFormControls.stock.value,
+        description: editFormControls.description.value,
+        isActive: editFormControls.isActive.value,
+      };
+
+      this.productService
+        .updateProduct(this.productId(), payload)
+        .subscribe({
+          next: () => {
+            this.closeModal();
+            this.saved.emit();
+          },
+          error: (err) => console.error(err),
+        });
+    }
   }
 
   closeModal() {

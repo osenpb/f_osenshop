@@ -9,9 +9,9 @@
         <p class="text-zinc-500 text-xs mt-1 uppercase tracking-widest">Panel de administración OsenShop</p>
       </div>
 
-      <button class="bg-white text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-        + Añadir Producto
-      </button>
+       <button (click)="onAdd()" class="bg-white text-black px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+         + Añadir Producto
+       </button>
     </div>
          @if (isLoading()) {
               <app-loading-spinner />
@@ -113,7 +113,8 @@
       <app-admin-edit-product-modal
         [open]="isEditModalOpen()"
         (close)="closeModal()"
-        [productId]="selectedProductId()!"
+        [productId]="selectedProductId() || 0"
+        [mode]="modalMode()"
         (saved)="onProductUpdated()"
         />
     }

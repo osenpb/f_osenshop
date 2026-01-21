@@ -1,6 +1,6 @@
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ProductService } from '../../../services/product.service';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 
 import { DecimalPipe } from '@angular/common';
 import { EditProductModalComponent } from "../edit-product-modal.component/edit-product-modal.component";
@@ -20,11 +20,14 @@ export class ProductListComponent {
   private ProductService = inject(ProductService);
 
   selectedProductId = signal<number | null>(null);
+  modalMode = signal<'edit' | 'add'>('edit');
   // page = signal<number>(0);
   // size = signal<number>(10);
 
   productoResource = rxResource<ProductResponse[], void>({
     stream: () => this.ProductService.getProducts(),
+
+
   })
 
   products = computed(() => this.productoResource.value() ?? []);
@@ -34,8 +37,17 @@ export class ProductListComponent {
 
   onEdit(id: number) {
     console.log(id);
+    this.modalMode.set('edit');
     this.isEditModalOpen.set(true);
     this.selectedProductId.set(id);
+  }
+
+  onAdd() {
+
+
+    this.modalMode.set('add');
+    this.isEditModalOpen.set(true);
+    this.selectedProductId.set(null);
   }
 
   onDelete(id: number) {
