@@ -128,7 +128,8 @@ export class ProductDetailComponent {
 
 
   showAuth(){
-    console.log("AUTHENTICACION:", this.authService.isAuthenticated);
+    // Authentication check - currently used for debugging
+    return this.authService.isAuthenticated;
   }
 
 }

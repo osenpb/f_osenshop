@@ -45,9 +45,12 @@ export class NavBarComponent {
   }
 
   showUser() {
-    if(!this.user()) console.log('no hay user');
-    else{
-      console.log(this.user()?.firstName);
+    // User display logic - currently no UI implementation
+    const user = this.user();
+    if (!user) {
+      // Handle no user case
+    } else {
+      // Handle user display
     }
   }
 }

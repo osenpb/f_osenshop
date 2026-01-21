@@ -5,12 +5,14 @@ import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard
 import { ProductManagementPageComponent } from './pages/product-management-page/product-management-page.component';
 import { CategoriesManagementPageComponent } from './pages/categories-management-page/categories-management-page.component';
 import { OrderManagementPageComponent } from './pages/order-management-page.component/order-management-page.component';
+import { authGuard } from '../core/guards/auth.guard';
 
 
 const adminRoutes: Routes = [
     {
         path: '',
         component: AdminLayoutComponent,
+        canActivate: [authGuard(['ROLE_ADMIN'])],
         children: [
             {
                 path: '',
@@ -19,7 +21,7 @@ const adminRoutes: Routes = [
             },
             {
                 path: 'dashboard',
-                component: AdminDashboardComponent
+                component: AdminDashboardComponent, // lazt loading component
             },
             {
                 path: 'productos',

@@ -1,6 +1,7 @@
 import { ProductService } from '../../../services/product.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoryService } from '../../../services/category.service';
+import { NotificationService } from '../../../services/notification.service';
 import { ChangeDetectionStrategy, Component, inject, input, output, computed, signal, effect } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ProductResponse } from '../../../product/interfaces/product-response.interface';
@@ -20,6 +21,7 @@ export class EditProductModalComponent {
   private categoryService = inject(CategoryService);
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
+  private notificationService = inject(NotificationService);
 
   open = input<boolean>(false);
   close = output<void>();
@@ -117,8 +119,6 @@ export class EditProductModalComponent {
         isActive: editFormControls.isActive.value,
       };
 
-      console.log('Creating product with payload:', payload);
-
       this.productService
         .createProduct(payload)
         .subscribe({
@@ -127,7 +127,7 @@ export class EditProductModalComponent {
             this.saved.emit();
           },
           error: (err) => {
-            // Handle error
+            this.notificationService.error('Error al crear el producto. Por favor, inténtalo de nuevo.');
           },
         });
     } else {
@@ -149,7 +149,9 @@ export class EditProductModalComponent {
             this.closeModal();
             this.saved.emit();
           },
-          error: (err) => console.error(err),
+          error: (err) => {
+            this.notificationService.error('Error al actualizar el producto. Por favor, inténtalo de nuevo.');
+          },
         });
     }
   }

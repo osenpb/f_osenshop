@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/c
 
 import { rxResource } from '@angular/core/rxjs-interop';
 import { OrderResponse } from '../../../order/interfaces/order-response.interface';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-admin-orders-list',
@@ -14,6 +15,7 @@ import { OrderResponse } from '../../../order/interfaces/order-response.interfac
 export class OrderListComponent {
 
   private orderService = inject(OrderService);
+  private notificationService = inject(NotificationService);
 
   ordersResource = rxResource<OrderResponse[], void>({
     stream: () => this.orderService.getAllOrders(),
@@ -27,18 +29,20 @@ export class OrderListComponent {
 
 
 
-  viewDetails(arg0: any) {
-    throw new Error('Method not implemented.');
+  viewDetails(orderId: number) {
+    const order = this.orders().find(o => o.id === orderId);
+    if (order) {
+      alert(`Order Details:\nID: ${order.id}\nTotal: $${order.total}\nStatus: ${order.status}\nItems: ${order.items.length}\nShipping: ${order.shippingAddress}`);
+    }
   }
 
   changeStatus(orderId: number) {
     this.orderService.updateStatus(orderId).subscribe({
       next: () => {
-        console.log('Order status updated');
         this.ordersResource.reload();
       },
       error: (err) => {
-        console.log(err);
+        this.notificationService.error('Error al actualizar el estado del pedido. Por favor, inténtalo de nuevo.');
       }
     });
   }

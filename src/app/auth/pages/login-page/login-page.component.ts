@@ -40,7 +40,6 @@ export class LoginPageComponent {
       .subscribe({
         next: () => {
           this.loading.set(false)
-          console.log(this.authService.user()?.role);
           if (this.authService.user()?.role === "ROLE_ADMIN") {
             this.router.navigate(['/admin/dashboard']);
 

@@ -36,7 +36,6 @@ export class ProductListComponent {
   error = this.productoResource.error;
 
   onEdit(id: number) {
-    console.log(id);
     this.modalMode.set('edit');
     this.isEditModalOpen.set(true);
     this.selectedProductId.set(id);

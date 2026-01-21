@@ -6,15 +6,18 @@ import { ProductDetailPageComponent } from "../product/pages/product-detail-page
 import { AboutUsPageComponent } from "./pages/about-us-page/about-us-page.component";
 import { BrandsPageComponent } from "./pages/brands-page/brands-page.component";
 import { HomePageComponent } from "./pages/home-page.component/home-page.component";
+import { authGuard } from '../core/guards/auth.guard';
 
 const homeRoutes = [
   {
     path: 'index',
-    component: HomePageComponent
+    component: HomePageComponent,
+    canActivate: [authGuard(['ROLE_USER'])]
   },
   {
     path: 'product/detail/:id',
-    component: ProductDetailPageComponent
+    component: ProductDetailPageComponent,
+    canActivate: [authGuard(['ROLE_USER'])]
   },
   // {
   //   path: 'cart',
@@ -22,15 +25,18 @@ const homeRoutes = [
   // },
   {
     path: 'checkout',
-    component: CheckoutFormPageComponent
+    component: CheckoutFormPageComponent,
+    canActivate: [authGuard(['ROLE_USER'])]
   },
   {
     path: 'about',
-    component: AboutUsPageComponent
+    component: AboutUsPageComponent,
+    canActivate: [authGuard(['ROLE_USER'])]
   },
   {
     path: 'brands',
-    component: BrandsPageComponent
+    component: BrandsPageComponent,
+    canActivate: [authGuard(['ROLE_USER'])]
   },
 ];
 

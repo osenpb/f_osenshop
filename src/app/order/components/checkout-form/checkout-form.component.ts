@@ -6,6 +6,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OrderService } from '../../../services/order.service';
 import { AuthService } from '../../../services/auth.service';
 import { CartService } from '../../../services/cart.service';
+import { NotificationService } from '../../../services/notification.service';
 import { SuccessModalOrderComponent } from "../success-modal-order.component/success-modal-order.component";
 
 @Component({
@@ -19,6 +20,7 @@ export class CheckoutComponent {
   private orderService = inject(OrderService);
   private authService = inject(AuthService);
   private cartService = inject(CartService);
+  private notificationService = inject(NotificationService);
 
   private fb = inject(FormBuilder)
   private router = inject(Router);
@@ -52,7 +54,9 @@ export class CheckoutComponent {
           this.router.navigate(['/home/index']);
         }, 4000);
       },
-      error: () => console.log('error')
+      error: (error) => {
+        this.notificationService.error('Error al procesar el pedido. Por favor, inténtalo de nuevo.');
+      }
     });
   }
 }
