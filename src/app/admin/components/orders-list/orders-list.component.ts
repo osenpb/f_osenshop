@@ -30,4 +30,17 @@ export class OrderListComponent {
   viewDetails(arg0: any) {
     throw new Error('Method not implemented.');
   }
+
+  changeStatus(orderId: number) {
+    this.orderService.updateStatus(orderId).subscribe({
+      next: () => {
+        console.log('Order status updated');
+        this.ordersResource.reload();
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
+  }
+
 }
