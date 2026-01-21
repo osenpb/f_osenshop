@@ -7,7 +7,8 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 
-import { provideSweetAlert2 } from "@sweetalert2/ngx-sweetalert2";
+
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,8 +19,7 @@ export const appConfig: ApplicationConfig = {
     withInterceptors([
       authInterceptor,
       loggingInterceptor])),
-    provideSweetAlert2({
-            fireOnInit: false,
-            dismissOnDestroy: true,
-        }),  ]
+
+    provideCharts(withDefaultRegisterables())],
+
 };

@@ -42,7 +42,7 @@ export class LoginPageComponent {
           this.loading.set(false)
           console.log(this.authService.user()?.role);
           if (this.authService.user()?.role === "ROLE_ADMIN") {
-            this.router.navigate(['/admin']);
+            this.router.navigate(['/admin/dashboard']);
 
           } else if (this.authService.user()?.role === "ROLE_USER") {
             this.router.navigate(['/home/index']);

@@ -13,6 +13,11 @@ const adminRoutes: Routes = [
         component: AdminLayoutComponent,
         children: [
             {
+                path: '',
+                redirectTo: 'productos',
+                pathMatch: 'full'
+            },
+            {
                 path: 'dashboard',
                 component: AdminDashboardComponent
             },

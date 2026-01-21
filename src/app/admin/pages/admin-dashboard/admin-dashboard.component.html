@@ -1,1 +1,49 @@
-<p>dashboard.component works!</p>,
+<div class="flex flex-col items-center justify-center min-h-screen bg-black p-8">
+  <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 w-full max-w-2xl">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold tracking-tighter text-white uppercase italic">
+        Dashboard <span class="text-zinc-500 font-light">Administrativo</span>
+      </h1>
+      <p class="text-zinc-500 text-xs mt-1 uppercase tracking-widest">Panel de control OsenShop</p>
+    </div>
+
+    <div class="flex justify-center">
+      <div class="w-[500px] h-[500px]">
+        @if (isLoading()) {
+          <div class="flex items-center justify-center h-full">
+            <div class="text-zinc-400">Cargando datos...</div>
+          </div>
+        } @else {
+          <canvas
+            baseChart
+            [data]="pieChartData()"
+            [options]="pieChartOptions"
+            [type]="pieChartType">
+          </canvas>
+        }
+      </div>
+    </div>
+
+    <div class="mt-8 text-center text-zinc-400 text-sm">
+      <p>Distribución de órdenes por estado</p>
+      <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-400">{{ pendingOrders() }}</div>
+          <div class="text-xs uppercase tracking-wider">PENDIENTES</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-400">{{ shippedOrders() }}</div>
+          <div class="text-xs uppercase tracking-wider">ENVIADAS</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-600">{{ deliveredOrders() }}</div>
+          <div class="text-xs uppercase tracking-wider">ENTREGADAS</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-red-400">{{ cancelledOrders() }}</div>
+          <div class="text-xs uppercase tracking-wider">CANCELADAS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
