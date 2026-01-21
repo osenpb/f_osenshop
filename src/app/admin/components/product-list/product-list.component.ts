@@ -6,7 +6,7 @@ import { DecimalPipe } from '@angular/common';
 import { EditProductModalComponent } from "../edit-product-modal.component/edit-product-modal.component";
 
 import { LoadingSpinnerComponent } from "../../../home/components/loading-spinner/loading-spinner.component";
-import { PageResponse } from '../../../product/interfaces/page-response.interface';
+//import { PageResponse } from '../../../product/interfaces/page-response.interface'; // luego agregamos paginacion, cuando sean muchos mas pr
 import { ProductResponse } from '../../../product/interfaces/product-response.interface';
 
 @Component({
@@ -20,8 +20,8 @@ export class ProductListComponent {
   private ProductService = inject(ProductService);
 
   selectedProductId = signal<number | null>(null);
-  page = signal<number>(0);
-  size = signal<number>(10);
+  // page = signal<number>(0);
+  // size = signal<number>(10);
 
   productoResource = rxResource<ProductResponse[], void>({
     stream: () => this.ProductService.getProducts(),
@@ -29,17 +29,19 @@ export class ProductListComponent {
 
   products = computed(() => this.productoResource.value() ?? []);
 
-  isLoading = this.productoResource.isLoading();
-  error = this.productoResource.error();
+  isLoading = this.productoResource.isLoading;
+  error = this.productoResource.error;
 
   onEdit(id: number) {
     console.log(id);
     this.isEditModalOpen.set(true);
     this.selectedProductId.set(id);
   }
+
   onDelete(id: number) {
 
   }
+
 
   // Modal
 

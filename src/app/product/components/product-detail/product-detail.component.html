@@ -73,7 +73,7 @@
             </button>
 
             <input #qty type="number" class="w-12 text-center bg-transparent border-none focus:ring-0 text-sm font-bold"
-              [value]="quantity()" (input)="setQuantity(qty.valueAsNumber)" [disabled]="!canAddMore()" min="0"
+              [value]="quantity()" (input)="setQuantity(qty.valueAsNumber)" [disabled]="!canAddMore()" min="1"
               [max]="product()!.stock" />
 
             <button (click)="increase()" [disabled]="!canAddSelectedQuantity()" class="w-10 h-10 flex items-center justify-center rounded-full

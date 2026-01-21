@@ -73,8 +73,8 @@ export class EditProductModalComponent {
     return this.categoryResource.value();
   })
 
-  isLoading = computed(() => this.categoryResource.isLoading());
-  error = computed(() => this.categoryResource.error());
+  isLoading = this.categoryResource.isLoading;
+  error = this.categoryResource.error;
 
   product = computed(() => {
     return this.productResource.value();

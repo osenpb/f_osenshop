@@ -13,7 +13,7 @@
         + Añadir Producto
       </button>
     </div>
-         @if (isLoading) {
+         @if (isLoading()) {
               <app-loading-spinner />
             }
 
@@ -103,18 +103,19 @@
                 </td>
               </tr>
             }
-              @if (isEditModalOpen()) {
-                      <app-admin-edit-product-modal
-                        [open]="isEditModalOpen()"
-                        (close)="closeModal()"
-                        [productId]="selectedProductId()!"
-                        (saved)="onProductUpdated()"
-                        />
-                    }
 
           </tbody>
         </table>
       </div>
     </div>
+
+    @if (isEditModalOpen()) {
+      <app-admin-edit-product-modal
+        [open]="isEditModalOpen()"
+        (close)="closeModal()"
+        [productId]="selectedProductId()!"
+        (saved)="onProductUpdated()"
+        />
+    }
   </div>
 </div>
