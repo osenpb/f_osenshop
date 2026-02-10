@@ -80,6 +80,25 @@ export class AuthService {
       );
   }
 
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    return this.http.post<AuthResponse>(`${this.baseUrl}/refresh-token`, { refreshToken })
+      .pipe(
+        tap(resp => this.handleAuthSuccess(resp)),
+        catchError((error) => {
+          // If refresh fails, logout the user
+          this.logout();
+          return throwError(() => error);
+        })
+      );
+  }
+
   logout() {
     this._user.set(null);
     this._token.set(null);
@@ -92,7 +111,7 @@ export class AuthService {
   checkStatus(): Observable<boolean> {
 
     const token = this._token() || localStorage.getItem('token');
-
+    const refreshToken = localStorage.getItem('refreshToken');
     if (!token) {
       this._authStatus.set('not-authenticated');
       return of(false);

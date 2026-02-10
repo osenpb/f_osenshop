@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { authRefreshInterceptor } from './core/interceptors/auth-refresh.interceptor';
 import { loggingInterceptor } from './core/interceptors/logging.interceptor';
 
 
@@ -15,9 +16,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(withFetch(),
-    withInterceptors([
+    provideHttpClient(
+      
+      withFetch(),
+      withInterceptors([
       authInterceptor,
+      authRefreshInterceptor,
       loggingInterceptor])),
 
     provideCharts(withDefaultRegisterables())],
