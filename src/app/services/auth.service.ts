@@ -71,16 +71,24 @@ export class AuthService {
       );
   }
 
-  /**
-   * El Logout con Cookies DEBE ser una petición al servidor
-   * para que este responda con un Set-Cookie que expire la cookie actual.
-   */
   logout(): void {
     this.http.post(`${this.baseUrl}/logout`, {}).subscribe({
       next: () => this.logoutLocal(),
       error: () => this.logoutLocal() // Limpiamos local igual aunque falle el red
     });
   }
+
+
+  refreshToken(): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${this.baseUrl}/refresh`, {})
+    .pipe(
+      tap(user => this.setAuthentication(user)),
+      catchError(error => {
+        console.error('Error en la rotación de tokens:', error);
+        return throwError(() => error);
+      })
+    );
+}
 
   // === AYUDANTES PRIVADOS ===
 
