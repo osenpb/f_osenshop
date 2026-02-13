@@ -1,28 +1,21 @@
-
+import { HttpErrorResponse, HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { AuthService } from "../../services/auth.service";
-import { HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { Router } from "@angular/router";
+import { catchError, throwError } from "rxjs";
 
-
-export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.token();
+  const router = inject(Router);
 
-  // Endpoints que NO requieren token
-  const publicEndpoints = [
-    '/api/v1/auth/login',
-    '/api/v1/auth/register',
-    '/api/v1/auth/refresh-token'
-  ];
-
-  const isPublicEndpoint = publicEndpoints.some(endpoint => req.url.includes(endpoint));
-
-  // Agrega el token a todas las peticiones EXCEPTO las públicas
-  if (token && !isPublicEndpoint) {
-    req = req.clone({
-      headers: req.headers.append('Authorization', `Bearer ${token}`),
-    });
-  }
-
-  return next(req);
-}
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        // La cookie expiró o es inválida
+        authService.logoutLocal(); // Limpia signals
+        router.navigate(['/login']);
+      }
+      return throwError(() => error);
+    })
+  );
+};

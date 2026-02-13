@@ -3,13 +3,12 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessC
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { authRefreshInterceptor } from './core/interceptors/auth-refresh.interceptor';
-import { loggingInterceptor } from './core/interceptors/logging.interceptor';
+import { provideHttpClient, withFetch, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
+
 
 
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { credentialsInterceptor } from './core/interceptors/credentials.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,13 +16,14 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(
-      
-      withFetch(),
+      // withXsrfConfiguration({
+      //   cookieName: 'XSRF-TOKEN',
+      //   headerName: 'X-XSRF-TOKEN',
+      // }), Esto ya no tiene utilidad xq ya no usas CSRF
+      //withFetch(),
       withInterceptors([
-      authInterceptor,
-      authRefreshInterceptor,
-      loggingInterceptor])),
-
+        credentialsInterceptor,
+      ]
+    )),
     provideCharts(withDefaultRegisterables())],
-
 };

@@ -1,152 +1,96 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { UserResponse } from '../auth/interfaces/user-response.interface';
 import { RegisterRequest } from '../auth/interfaces/register-request.interface';
 import { LoginRequest } from '../auth/interfaces/login-request.interface';
-import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
-import { AuthResponse } from '../auth/interfaces/auth-response.interface';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { environment } from '../../environments/environment';
 
-type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
+
+export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  // API base url
   private readonly baseUrl = `${environment.apiUrl}/auth`;
-
-  // HttpClient
   private http = inject(HttpClient);
 
-  // === PRIVATE STATES ===
+  // === ESTADO PRIVADO (Signals) ===
+
   private _user = signal<UserResponse | null>(null);
   private _authStatus = signal<AuthStatus>('checking');
-  private _token = signal<string | null>(localStorage.getItem('token') ?? null);
 
+  // === ESTADO PÚBLICO (Read-only) ===
+  public user = computed(() => this._user());
+  public authStatus = computed(() => this._authStatus());
 
-  // === PUBLIC STATES ===
-  authStatus = computed(() => {
-    if (this._authStatus() === 'checking') return 'checking';
-    if (this._user()) return 'authenticated';
-    else return 'not-authenticated';
-  });
-
-  isAuthenticated = computed(() => !!this._user() && !!this._token() && this._authStatus() === 'authenticated');
-  user = computed<UserResponse | null>(() => this._user());
-  token = computed<string | null>(() => this._token());
-
-  checkStatusResource = rxResource({
-    stream: () => this.checkStatus(),
-  });
+  public isAuthenticated = computed(() =>
+    this._authStatus() === 'authenticated' && !!this._user()
+  );
 
   constructor() {
-    // Initialize auth status check on service creation
+    // Esto se ejecuta una vez al iniciar la App
     this.checkStatus().subscribe();
   }
 
+  // === MÉTODOS DE ACCIÓN ===
 
-  register(registerRequest: RegisterRequest) {
-    return this.http.post<UserResponse>(`${this.baseUrl}/register`, registerRequest);
-  }
-
-  login(loginRequest: LoginRequest) {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, loginRequest)
+  login(loginRequest: LoginRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${this.baseUrl}/login`, loginRequest)
       .pipe(
-        tap(resp => this.handleAuthSuccess(resp)),
+        tap(user => this.setAuthentication(user)),
         catchError((error: HttpErrorResponse) => {
-          let message = 'Error al iniciar sesión';
-
-          if (error.status === 403) {
-            message = 'El correo o la contraseña no son correctos';
-          } else if (error.status === 0) {
-            message = 'No se pudo conectar con el servidor';
-          }
-
+          const message = error.status === 403
+            ? 'Credenciales incorrectas'
+            : 'Error de conexión con el servidor';
           return throwError(() => new Error(message));
         })
       );
   }
 
-  me() {
-    return this.http.get<UserResponse>(`${this.baseUrl}/me`)
-      .pipe(
-        tap((user: UserResponse) => {
-          this._user.set(user);
-        }
-        ),
-      );
+  register(registerRequest: RegisterRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(`${this.baseUrl}/register`, registerRequest)
+      .pipe(tap(user => this.setAuthentication(user)));
   }
 
-  refreshToken(): Observable<AuthResponse> {
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.http.post<AuthResponse>(`${this.baseUrl}/refresh-token`, { refreshToken })
-      .pipe(
-        tap(resp => this.handleAuthSuccess(resp)),
-        catchError((error) => {
-          // If refresh fails, logout the user
-          this.logout();
-          return throwError(() => error);
-        })
-      );
-  }
-
-  logout() {
-    this._user.set(null);
-    this._token.set(null);
-    this._authStatus.set('not-authenticated');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-  }
-
-  // check if there is a token in local storage and validate it
+  /**
+   *  Pregunta al servidor quién es el dueño de la cookie.
+   */
   checkStatus(): Observable<boolean> {
+    this._authStatus.set('checking');
 
-    const token = this._token() || localStorage.getItem('token');
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!token) {
-      this._authStatus.set('not-authenticated');
-      return of(false);
-    }
-
-    // If token exists in localStorage but not in signal, set it
-    if (!this._token() && token) {
-      this._token.set(token);
-    }
-
-    return this.http
-      .get<AuthResponse>(`${this.baseUrl}/check-status`)
+    return this.http.get<UserResponse>(`${this.baseUrl}/check-status`)
       .pipe(
-        tap(resp => this.handleAuthSuccess(resp)),
+        tap(user => this.setAuthentication(user)),
         map(() => true),
-        catchError((error: any) => {
-          // Only logout if it's a 401/403, otherwise keep the token
-          if (error.status === 401 || error.status === 403) {
-            this.logout();
-          }
+        catchError(() => {
+          this.logoutLocal();
           return of(false);
         })
       );
   }
 
-  private handleAuthSuccess(resp: AuthResponse): boolean {
+  /**
+   * El Logout con Cookies DEBE ser una petición al servidor
+   * para que este responda con un Set-Cookie que expire la cookie actual.
+   */
+  logout(): void {
+    this.http.post(`${this.baseUrl}/logout`, {}).subscribe({
+      next: () => this.logoutLocal(),
+      error: () => this.logoutLocal() // Limpiamos local igual aunque falle el red
+    });
+  }
 
-    const accessToken = resp.tokens.accessToken;
+  // === AYUDANTES PRIVADOS ===
 
-    this._token.set(accessToken);
-    this._user.set(resp.user);
+  private setAuthentication(user: UserResponse): void {
+    this._user.set(user);
     this._authStatus.set('authenticated');
-    // SAVE TOKENS
-    localStorage.setItem('token', accessToken);
-    localStorage.setItem('refreshToken', resp.tokens.refreshToken); // despues refresh-token
-    return true;
+  }
+
+  public logoutLocal(): void {
+    this._user.set(null);
+    this._authStatus.set('not-authenticated');
   }
 }
