@@ -12,12 +12,10 @@ const homeRoutes = [
   {
     path: 'index',
     component: HomePageComponent,
-    canActivate: [authGuard(['ROLE_USER'])]
   },
   {
     path: 'product/detail/:id',
     component: ProductDetailPageComponent,
-    canActivate: [authGuard(['ROLE_USER'])]
   },
   // {
   //   path: 'cart',
@@ -31,12 +29,10 @@ const homeRoutes = [
   {
     path: 'about',
     component: AboutUsPageComponent,
-    canActivate: [authGuard(['ROLE_USER'])]
   },
   {
     path: 'brands',
     component: BrandsPageComponent,
-    canActivate: [authGuard(['ROLE_USER'])]
   },
 ];
 

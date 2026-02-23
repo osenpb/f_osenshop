@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 import { UserResponse } from '../auth/interfaces/user-response.interface';
 import { RegisterRequest } from '../auth/interfaces/register-request.interface';
 import { LoginRequest } from '../auth/interfaces/login-request.interface';
-
+import { TokenResponse } from '../auth/interfaces/token-response.interface';
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
@@ -34,7 +34,7 @@ export class AuthService {
     this.checkStatus().subscribe();
   }
 
-  // === MÉTODOS DE ACCIÓN ===
+  // === ACTION METHODS ===
 
   login(loginRequest: LoginRequest): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.baseUrl}/login`, loginRequest)
@@ -59,9 +59,9 @@ export class AuthService {
    */
   checkStatus(): Observable<boolean> {
     this._authStatus.set('checking');
-
-    return this.http.get<UserResponse>(`${this.baseUrl}/check-status`)
+    return this.http.get<{ user: UserResponse, tokens: TokenResponse }>(`${this.baseUrl}/check-status`)
       .pipe(
+        map(response => response.user),
         tap(user => this.setAuthentication(user)),
         map(() => true),
         catchError(() => {

@@ -1,30 +1,43 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { filter, map, switchMap, take } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 export const authGuard = (allowedRoles: ('ROLE_USER' | 'ROLE_ADMIN')[]) => {
   return () => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    const isAuthenticated = authService.isAuthenticated();
-    const user = authService.user();
-
-    if (!isAuthenticated || !user) {
-      router.navigate(['/auth/login']);
-      return false;
+    // Si ya tenemos un estado definitivo, respondemos de inmediato
+    if (authService.authStatus() !== 'checking') {
+      return resolveAccess(authService, router, allowedRoles);
     }
 
-    if (!allowedRoles.includes(user.role)) {
-      // Redirect based on user role
-      if (user.role === 'ROLE_ADMIN') {
-        router.navigate(['/admin']);
-      } else {
-        router.navigate(['/']);
-      }
-      return false;
-    }
-
-    return true;
+    // Si está en 'checking', esperamos a que se resuelva
+    return toObservable(authService.authStatus).pipe(
+      filter(status => status !== 'checking'),
+      take(1),
+      map(() => resolveAccess(authService, router, allowedRoles))
+    );
   };
 };
+
+function resolveAccess(
+  authService: AuthService,
+  router: Router,
+  allowedRoles: ('ROLE_USER' | 'ROLE_ADMIN')[]
+): boolean | ReturnType<Router['createUrlTree']> {
+  const user = authService.user();
+
+  if (!authService.isAuthenticated() || !user) {
+    return router.createUrlTree(['/auth/login']);
+  }
+
+  if (!allowedRoles.includes(user.role)) {
+    const redirect = user.role === 'ROLE_ADMIN' ? '/admin' : '/';
+    return router.createUrlTree([redirect]);
+  }
+
+  return true;
+}

@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 
 import { OrderFormRequest } from '../../interfaces/order-form-request.interface';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -27,7 +27,6 @@ export class CheckoutComponent {
   readonly user = this.authService.user;
 
   showSuccessModal = signal(false);
-
 
   cart = this.cartService.cart;
 
