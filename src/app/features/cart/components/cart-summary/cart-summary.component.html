@@ -1,0 +1,66 @@
+ <aside
+          class="
+            h-fit
+            sticky top-24
+            bg-white dark:bg-neutral-900
+            border border-neutral-200 dark:border-neutral-800
+            rounded-2xl
+            p-6
+            space-y-6
+          "
+        >
+
+          <h2
+            class="
+              text-lg font-medium
+              text-neutral-900 dark:text-white
+            "
+          >
+            Resumen del pedido
+          </h2>
+
+           <div class="flex justify-between text-sm text-neutral-500">
+             <span>Productos</span>
+             <span>{{ cartService.totalQuantity() }}</span>
+           </div>
+
+           <div class="flex justify-between text-sm text-neutral-500">
+             <span>Subtotal</span>
+             <span>s/.{{ cartService.total() }}</span>
+           </div>
+
+          <div
+            class="
+              flex justify-between
+              text-lg font-semibold
+              text-neutral-900 dark:text-white
+              pt-4
+              border-t border-neutral-200 dark:border-neutral-800
+            "
+          >
+            <span>Total</span>
+            <span>s/.{{ cartService.total() }}</span>
+          </div>
+
+          <button
+            routerLink="/checkout"
+            type="button"
+            class="
+              w-full
+              py-3
+              rounded-xl
+              text-white font-medium
+              bg-black dark:bg-white
+              dark:text-black
+              hover:opacity-90
+              transition
+            "
+          >
+            Pagar ahora
+          </button>
+
+          <p class="text-xs text-neutral-500 text-center">
+            Paga seguro
+          </p>
+
+        </aside>

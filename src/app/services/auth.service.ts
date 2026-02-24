@@ -2,10 +2,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { UserResponse } from '../auth/interfaces/user-response.interface';
-import { RegisterRequest } from '../auth/interfaces/register-request.interface';
-import { LoginRequest } from '../auth/interfaces/login-request.interface';
-import { TokenResponse } from '../auth/interfaces/token-response.interface';
+import { UserResponse } from '../interfaces/auth/user-response.interface';
+import { RegisterRequest } from '../interfaces/auth/register-request.interface';
+import { LoginRequest } from '../interfaces/auth/login-request.interface';
+import { TokenResponse } from '../interfaces/auth/token-response.interface';
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 

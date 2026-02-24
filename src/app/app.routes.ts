@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { HomeLayoutComponent } from './home/layout/home-layout/home-layout.component';
+import { HomeLayoutComponent } from './features/home/layout/home-layout/home-layout.component';
 export const routes: Routes = [
   // 1. La redirección exacta: Solo si la URL es "nada", ve al login
   {
@@ -10,11 +10,11 @@ export const routes: Routes = [
   // 2. Rutas específicas
   {
     path: 'auth',
-    loadChildren: () => import('./auth/auth.routes'),
+    loadChildren: () => import('./features/auth/auth.routes'),
   },
   {
     path: 'admin',
-    loadChildren: () => import('./admin/admin.routes'),
+    loadChildren: () => import('./features/admin/admin.routes'),
   },
   // 3. El Layout de la Home (ahora ya no atrapa a 'auth' porque está después)
   {
@@ -23,21 +23,25 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadChildren: () => import('./home/home.routes'),
+        loadChildren: () => import('./features/home/home.routes'),
       },
       {
         path: 'cart',
-        loadChildren: () => import('./cart/cart.routes'),
+        loadChildren: () => import('./features/cart/cart.routes'),
       },
       {
         path: 'order',
-        loadChildren: () => import('./order/order.routes'),
+        loadChildren: () => import('./features/order/order.routes'),
       },
+      {
+        path: 'checkout',
+        loadChildren: () => import('./features/checkout/checkout.routes'),
+      }
     ]
   },
-  // 4. El comodín: Si nada de lo anterior coincidió
+
   {
     path: '**',
-    redirectTo: 'auth/login',
+    redirectTo: 'home/index',
   }
 ];

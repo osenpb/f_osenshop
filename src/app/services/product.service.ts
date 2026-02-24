@@ -1,11 +1,11 @@
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { ProductResponse } from '../product/interfaces/product-response.interface';
-import { CreateProductRequest } from '../product/interfaces/product-request.interface';
-import { UpdateProductRequest } from '../product/interfaces/update-product-request';
+import { ProductResponse } from '../features/product/interfaces/product-response.interface';
+import { CreateProductRequest } from '../features/product/interfaces/product-request.interface';
+import { UpdateProductRequest } from '../features/product/interfaces/update-product-request';
 import { environment } from '../../environments/environment';
-import { PageInfo, PageResponse } from '../product/interfaces/page-response.interface';
+import { PageInfo, PageResponse } from '../features/product/interfaces/page-response.interface';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { catchError, debounceTime, distinctUntilChanged, map, of, throwError } from 'rxjs';
 

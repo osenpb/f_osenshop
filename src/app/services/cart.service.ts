@@ -1,9 +1,10 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { CartResponse } from '../cart/interfaces/cart-response.interface';
-import { CartItemResponse } from '../cart/interfaces/cart-item-response.interface';
+
 import { environment } from '../../environments/environment';
+import { CartResponse } from '../interfaces/cart/cart-response.interface';
+import { CartItemResponse } from '../interfaces/cart/cart-item-response.interface';
 
 
 

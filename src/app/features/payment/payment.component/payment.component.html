@@ -1,0 +1,83 @@
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="text-sm font-bold uppercase tracking-[0.2em] text-zinc-400">
+      03. Método de Pago
+    </h2>
+    <!-- Iconos de tarjetas -->
+    <div class="flex items-center gap-2">
+      <span class="text-[10px] bg-zinc-800 text-zinc-500 px-2 py-1 rounded">VISA</span>
+      <span class="text-[10px] bg-zinc-800 text-zinc-500 px-2 py-1 rounded">MASTERCARD</span>
+    </div>
+  </div>
+
+  <form id="form-checkout" class="space-y-4">
+
+    <!-- Número de tarjeta (iframe de MP) -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-widest text-zinc-500">Número de tarjeta</label>
+      <div id="form-checkout__cardNumber"
+        class="h-12 w-full bg-black/60 border border-zinc-800 rounded-xl px-4
+               focus-within:border-zinc-500 transition-all">
+      </div>
+    </div>
+
+    <!-- Expiración y CVV -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] uppercase tracking-widest text-zinc-500 ">Vencimiento</label>
+        <div id="form-checkout__expirationDate"
+          class="h-12 bg-black/60 border border-zinc-800 rounded-xl px-4
+                 focus-within:border-zinc-500 transition-all">
+        </div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] uppercase tracking-widest text-zinc-500">CVV</label>
+        <div id="form-checkout__securityCode"
+          class="h-12 bg-black/60 border border-zinc-800 rounded-xl px-4
+                 focus-within:border-zinc-500 transition-all">
+        </div>
+      </div>
+    </div>
+
+    <!-- Nombre del titular -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-widest text-zinc-500">Nombre del titular</label>
+      <input id="form-checkout__cardholderName" type="text"
+        placeholder="Como aparece en la tarjeta"
+        class="h-12 w-full bg-black/60 border border-zinc-800 rounded-xl px-4 text-sm text-white
+               placeholder-zinc-600 focus:outline-none focus:border-zinc-500 transition-all" />
+    </div>
+
+    <!-- Tipo y número de documento -->
+    <div class="grid grid-cols-3 gap-4">
+      <div class="flex flex-col gap-1">
+        <label class="text-[10px] uppercase tracking-widest text-zinc-500">Tipo doc.</label>
+        <select id="form-checkout__identificationType"
+          class="h-12 bg-black/60 border border-zinc-800 rounded-xl px-4 text-sm text-zinc-400
+                 focus:outline-none focus:border-zinc-500 transition-all">
+        </select>
+      </div>
+      <div class="col-span-2 flex flex-col gap-1">
+        <label class="text-[10px] uppercase tracking-widest text-zinc-500">Número de documento</label>
+        <input id="form-checkout__identificationNumber" type="text"
+          placeholder="Ej: 12345678"
+          class="h-12 bg-black/60 border border-zinc-800 rounded-xl px-4 text-sm text-white
+                 placeholder-zinc-600 focus:outline-none focus:border-zinc-500 transition-all" />
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="flex flex-col gap-1">
+      <label class="text-[10px] uppercase tracking-widest text-zinc-500">Email</label>
+      <input id="form-checkout__cardholderEmail" type="email"
+        placeholder="correo@ejemplo.com"
+        class="h-12 w-full bg-black/60 border border-zinc-800 rounded-xl px-4 text-sm text-white
+               placeholder-zinc-600 focus:outline-none focus:border-zinc-500 transition-all" />
+    </div>
+
+    <!-- Hidden fields requeridos por el SDK -->
+    <select id="form-checkout__issuer" class="hidden"></select>
+    <select id="form-checkout__installments" class="hidden"></select>
+
+  </form>
+</div>

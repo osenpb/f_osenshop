@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 
 import { inject, Injectable } from '@angular/core';
-import { OrderResponse } from '../order/interfaces/order-response.interface';
-import { OrderFormRequest } from '../order/interfaces/order-form-request.interface';
+
 import { environment } from '../../environments/environment';
+import { OrderResponse } from '../interfaces/order/order-response.interface';
+import { OrderFormRequest } from '../interfaces/order/order-form-request.interface';
 
 
 @Injectable({
