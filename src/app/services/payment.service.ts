@@ -1,7 +1,14 @@
+import { OrderFormRequest } from './../interfaces/order/order-form-request.interface';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { MercadoPagoPaymentRequest } from '../interfaces/payment/payment-request.interface';
+
+interface CheckoutRequest {
+  payment: MercadoPagoPaymentRequest;
+  order: OrderFormRequest;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +16,13 @@ import { MercadoPagoPaymentRequest } from '../interfaces/payment/payment-request
 export class PaymentService {
 
   private http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/payments`;
+  private readonly baseUrl = `${environment.apiUrl}/checkout/process`;
 
-  processPayment(paymentData: MercadoPagoPaymentRequest) {
-    return this.http.post(this.baseUrl, paymentData);
+  processPayment(checkoutRequest: CheckoutRequest) {
+    return this.http.post(this.baseUrl, {
+      payment: checkoutRequest.payment,
+      order: checkoutRequest.order
+    }
+    );
   }
 }

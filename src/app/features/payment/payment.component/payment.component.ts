@@ -8,7 +8,7 @@ import { CartService } from '../../../services/cart.service';
 import { environment } from '../../../../environments/environment';
 
 
-declare const MercadoPago: { new (publicKey: string, options: { locale: string }): MercadoPagoInstance; };
+declare const MercadoPago: { new(publicKey: string, options: { locale: string }): MercadoPagoInstance; };
 
 @Component({
   selector: 'app-payment',
@@ -34,7 +34,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   submitPayment() {
     const form = document.getElementById('form-checkout') as HTMLFormElement;
     if (form) {
-      form.dispatchEvent(new Event('submit', { bubbles: true }));
+      this.cardForm.submit();
     }
   }
 
@@ -66,26 +66,33 @@ export class PaymentComponent implements OnInit, OnDestroy {
             this.ready.emit();
           }
         },
-        onSubmit: (event: Event) => {
+        onSubmit: async (event: Event) => {
           event.preventDefault();
-          const data: CardFormData = this.cardForm.getCardFormData();
-
-          if (!data.token) {
-            console.error("Payment form invalid - missing token");
-            return;
-          }
-
           this.isSubmitting.set(true);
 
-          this.checkoutState.createOrderAndPay({
-            token: data.token,
-            payment_method_id: (data as any).paymentMethodId ?? (data as any).payment_method_id,
-            issuer_id: (data as any).issuer?.id ?? (data as any).issuer_id,
-            transaction_amount: 100.00,
-            installments: Number(data.installments ?? 1),
-            description: 'Portfolio product',
-            payer: { email: (data as any).cardholderEmail ?? 'test@test.com' }
-          }, () => this.isSubmitting.set(false));
+          try {
+            const data = this.cardForm.getCardFormData();
+
+            console.log("CardForm data:", data);
+
+            if (!data.token) {
+              throw new Error("Token no generado");
+            }
+
+            this.checkoutState.createOrderAndPay({
+              token: data.token,
+              payment_method_id: data.paymentMethodId,
+              issuer_id: data.issuerId,
+              transaction_amount: 100.00,
+              installments: Number(data.installments ?? 1),
+              description: 'Portfolio product',
+              payer: { email: data.cardholderEmail }
+            }, () => this.isSubmitting.set(false));
+
+          } catch (error) {
+            console.error("Payment error:", error);
+            this.isSubmitting.set(false);
+          }
         },
         onFetching: (resource: string) => console.log("Fetching:", resource)
       }

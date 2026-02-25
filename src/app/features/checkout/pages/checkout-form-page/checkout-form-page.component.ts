@@ -16,14 +16,12 @@ export class CheckoutFormPageComponent {
   private cdr = inject(ChangeDetectorRef);
 
   constructor() {
-    // Detectar cambios cuando la signal cambia
     effect(() => {
       const isValid = this.checkoutState.checkoutFormValid();
       console.log('CheckoutFormPageComponent - checkoutFormValid:', isValid);
       this.cdr.markForCheck();
     });
   }
-
 
   onContinueToPayment() {
     this.router.navigate(['/checkout/payment']);

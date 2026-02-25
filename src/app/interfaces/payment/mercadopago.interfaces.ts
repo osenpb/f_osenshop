@@ -35,12 +35,17 @@ export interface CardFormCallbacks {
 
 export interface CardFormInstance {
   getCardFormData: () => CardFormData;
+  createCardToken: () => Promise<{ id: string }>;
   unmount: () => void;
+  submit: () => void;
 }
 
 export interface CardFormData {
   token: string;
-  installments: string;
-  issuerId: string;
   paymentMethodId: string;
+  issuerId: string;
+  installments: string;
+  cardholderEmail: string;
+  identificationType: string;
+  identificationNumber: string;
 }

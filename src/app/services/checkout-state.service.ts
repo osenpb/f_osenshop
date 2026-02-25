@@ -1,3 +1,4 @@
+import { OrderFormRequest } from './../interfaces/order/order-form-request.interface';
 import { Injectable, signal, computed } from '@angular/core';
 import { OrderService } from './order.service';
 import { CartService } from './cart.service';
@@ -7,6 +8,8 @@ import { inject } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutStateService {
+
+
   private orderService = inject(OrderService);
   private cartService = inject(CartService);
   private paymentService = inject(PaymentService);
@@ -15,7 +18,7 @@ export class CheckoutStateService {
   triggerPayment = signal<boolean>(false);
   showSuccessModal = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
-  
+
   checkoutFormValid = signal<boolean>(false);
   paymentFormValid = signal<boolean>(false);
 
@@ -35,9 +38,9 @@ export class CheckoutStateService {
 
   submitPayment() {
     if (this.isSubmitting()) return;
-    
+
     this.isSubmitting.set(true);
-    
+
     this.orderService.createOrder({ shippingAddress: this.shippingAddress() })
       .subscribe({
         next: () => {
@@ -56,13 +59,13 @@ export class CheckoutStateService {
     this.isSubmitting.set(false);
   }
 
-  createOrderAndPay(paymentRequest: MercadoPagoPaymentRequest, onComplete?: () => void) {
+  createOrderAndPay(paymentRequest: MercadoPagoPaymentRequest, orderFormRequest: OrderFormRequest, onComplete?: () => void) {
     this.orderService.createOrder({ shippingAddress: this.shippingAddress() })
       .subscribe({
         next: () => {
           this.cartService.cartResource.reload();
-          
-          this.paymentService.processPayment(paymentRequest)
+
+          this.paymentService.processPayment(paymentRequest, orderFormRequest)
             .subscribe({
               next: (res) => {
                 console.log('Payment status:', res);

@@ -1,3 +1,4 @@
+
 export interface MercadoPagoPaymentRequest {
   token: string;
   payment_method_id?: string;
