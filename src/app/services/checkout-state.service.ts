@@ -59,8 +59,10 @@ export class CheckoutStateService {
     this.isSubmitting.set(false);
   }
 
-  createOrderAndPay(paymentRequest: MercadoPagoPaymentRequest, orderFormRequest: OrderFormRequest, onComplete?: () => void) {
-    this.orderService.createOrder({ shippingAddress: this.shippingAddress() })
+  createOrderAndPay(paymentRequest: MercadoPagoPaymentRequest, onComplete?: () => void) {
+    const orderFormRequest: OrderFormRequest = { shippingAddress: this.shippingAddress() };
+
+    this.orderService.createOrder(orderFormRequest)
       .subscribe({
         next: () => {
           this.cartService.cartResource.reload();

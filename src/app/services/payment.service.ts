@@ -18,11 +18,10 @@ export class PaymentService {
   private http = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl}/checkout/process`;
 
-  processPayment(checkoutRequest: CheckoutRequest) {
+  processPayment(payment: MercadoPagoPaymentRequest, order: OrderFormRequest) {
     return this.http.post(this.baseUrl, {
-      payment: checkoutRequest.payment,
-      order: checkoutRequest.order
-    }
-    );
+      payment,
+      order
+    });
   }
 }
