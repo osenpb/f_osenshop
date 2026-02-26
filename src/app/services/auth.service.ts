@@ -6,6 +6,7 @@ import { UserResponse } from '../interfaces/auth/user-response.interface';
 import { RegisterRequest } from '../interfaces/auth/register-request.interface';
 import { LoginRequest } from '../interfaces/auth/login-request.interface';
 import { TokenResponse } from '../interfaces/auth/token-response.interface';
+import { LoggingService } from './logging.service';
 
 export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 
@@ -15,6 +16,7 @@ export type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 export class AuthService {
   private readonly baseUrl = `${environment.apiUrl}/auth`;
   private http = inject(HttpClient);
+  private loggingService = inject(LoggingService);
 
   // === ESTADO PRIVADO (Signals) ===
 
@@ -84,7 +86,7 @@ export class AuthService {
     .pipe(
       tap(user => this.setAuthentication(user)),
       catchError(error => {
-        console.error('Error en la rotación de tokens:', error);
+        this.loggingService.error('Error en la rotación de tokens', error, 'AuthService');
         return throwError(() => error);
       })
     );

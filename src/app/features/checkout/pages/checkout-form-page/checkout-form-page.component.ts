@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, inject }
 import { Router } from '@angular/router';
 import { CheckoutComponent } from "../../components/checkout-form/checkout-form.component";
 import { CheckoutStateService } from '../../../../services/checkout-state.service';
+import { LoggingService } from '../../../../services/logging.service';
 
 @Component({
   selector: 'app-checkout-form-page.component',
@@ -14,11 +15,12 @@ export class CheckoutFormPageComponent {
   checkoutState = inject(CheckoutStateService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private loggingService = inject(LoggingService);
 
   constructor() {
     effect(() => {
       const isValid = this.checkoutState.checkoutFormValid();
-      console.log('CheckoutFormPageComponent - checkoutFormValid:', isValid);
+      this.loggingService.debug(`CheckoutFormPageComponent - checkoutFormValid: ${isValid}`, 'CheckoutFormPageComponent');
       this.cdr.markForCheck();
     });
   }

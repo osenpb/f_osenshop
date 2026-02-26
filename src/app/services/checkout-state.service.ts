@@ -1,17 +1,17 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { CartService } from './cart.service';
 import { PaymentService } from './payment.service';
 import { MercadoPagoPaymentRequest } from '../interfaces/payment/payment-request.interface';
 import { CheckoutRequest } from '../interfaces/checkout/checkout-request.interface';
 import { OrderFormRequest } from '../interfaces/order/order-form-request.interface';
-import { inject } from '@angular/core';
+import { LoggingService } from './logging.service';
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutStateService {
 
-
   private cartService = inject(CartService);
   private paymentService = inject(PaymentService);
+  private loggingService = inject(LoggingService);
 
   shippingAddress = signal<string>('');
   showSuccessModal = signal<boolean>(false);
@@ -52,13 +52,13 @@ export class CheckoutStateService {
     this.paymentService.processPayment(checkoutRequest)
       .subscribe({
         next: (res) => {
-          console.log('Payment and order status:', res);
+          this.loggingService.info(`Payment and order status: ${JSON.stringify(res)}`, 'CheckoutStateService');
           this.cartService.cartResource.reload();
           this.onPaymentSuccess();
           if (onComplete) onComplete();
         },
         error: (err) => {
-          console.error('Payment error:', err);
+          this.loggingService.error('Payment error', err, 'CheckoutStateService');
           if (onComplete) onComplete();
         }
       });

@@ -5,6 +5,7 @@ import { MercadoPagoPaymentRequest } from '../../../interfaces/payment/payment-r
 import { PaymentService } from '../../../services/payment.service';
 import { CheckoutStateService } from '../../../services/checkout-state.service';
 import { CartService } from '../../../services/cart.service';
+import { LoggingService } from '../../../services/logging.service';
 import { environment } from '../../../../environments/environment';
 
 
@@ -26,6 +27,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
   private checkoutState = inject(CheckoutStateService);
   private cartService = inject(CartService);
+  private loggingService = inject(LoggingService);
 
   isFormReady = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
@@ -58,9 +60,9 @@ export class PaymentComponent implements OnInit, OnDestroy {
       },
       callbacks: {
         onFormMounted: (error: Error | null) => {
-          if (error) console.error("Form mount error:", error);
+          if (error) this.loggingService.error("Form mount error", error, 'PaymentComponent');
           else {
-            console.log("Form mounted correctly");
+            this.loggingService.info("Form mounted correctly", 'PaymentComponent');
             this.isFormReady.set(true);
             this.checkoutState.setPaymentFormValid(true);
             this.ready.emit();
@@ -73,7 +75,7 @@ export class PaymentComponent implements OnInit, OnDestroy {
           try {
             const data = this.cardForm.getCardFormData();
 
-            console.log("CardForm data:", data);
+            this.loggingService.debug(`CardForm data: ${JSON.stringify(data)}`, 'PaymentComponent');
 
             if (!data.token) {
               throw new Error("Token no generado");
@@ -90,11 +92,11 @@ export class PaymentComponent implements OnInit, OnDestroy {
             }, () => this.isSubmitting.set(false));
 
           } catch (error) {
-            console.error("Payment error:", error);
+            this.loggingService.error("Payment error", error, 'PaymentComponent');
             this.isSubmitting.set(false);
           }
         },
-        onFetching: (resource: string) => console.log("Fetching:", resource)
+        onFetching: (resource: string) => this.loggingService.debug(`Fetching: ${resource}`, 'PaymentComponent')
       }
     });
   }

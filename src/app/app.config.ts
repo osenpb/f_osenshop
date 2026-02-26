@@ -1,5 +1,5 @@
 
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, ErrorHandler } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -9,6 +9,7 @@ import { provideHttpClient, withFetch, withInterceptors, withXsrfConfiguration }
 
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { credentialsInterceptor } from './core/interceptors/credentials.interceptor';
+import { GlobalErrorHandler } from './core/error-handler/global-error.handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,5 +26,6 @@ export const appConfig: ApplicationConfig = {
         credentialsInterceptor,
       ]
     )),
-    provideCharts(withDefaultRegisterables())],
+    provideCharts(withDefaultRegisterables()),
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }],
 };
