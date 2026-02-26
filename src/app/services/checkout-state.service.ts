@@ -1,21 +1,19 @@
-import { OrderFormRequest } from './../interfaces/order/order-form-request.interface';
 import { Injectable, signal, computed } from '@angular/core';
-import { OrderService } from './order.service';
 import { CartService } from './cart.service';
 import { PaymentService } from './payment.service';
 import { MercadoPagoPaymentRequest } from '../interfaces/payment/payment-request.interface';
+import { CheckoutRequest } from '../interfaces/checkout/checkout-request.interface';
+import { OrderFormRequest } from '../interfaces/order/order-form-request.interface';
 import { inject } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class CheckoutStateService {
 
 
-  private orderService = inject(OrderService);
   private cartService = inject(CartService);
   private paymentService = inject(PaymentService);
 
   shippingAddress = signal<string>('');
-  triggerPayment = signal<boolean>(false);
   showSuccessModal = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
 
@@ -36,51 +34,31 @@ export class CheckoutStateService {
     this.paymentFormValid.set(isValid);
   }
 
-  submitPayment() {
-    if (this.isSubmitting()) return;
-
-    this.isSubmitting.set(true);
-
-    this.orderService.createOrder({ shippingAddress: this.shippingAddress() })
-      .subscribe({
-        next: () => {
-          this.cartService.cartResource.reload();
-          this.triggerPayment.set(true);
-          setTimeout(() => this.triggerPayment.set(false), 100);
-        },
-        error: () => {
-          this.isSubmitting.set(false);
-        }
-      });
-  }
-
   onPaymentSuccess() {
     this.showSuccessModal.set(true);
     this.isSubmitting.set(false);
   }
 
   createOrderAndPay(paymentRequest: MercadoPagoPaymentRequest, onComplete?: () => void) {
-    const orderFormRequest: OrderFormRequest = { shippingAddress: this.shippingAddress() };
+    const orderRequest: OrderFormRequest = {
+      shippingAddress: this.shippingAddress()
+    };
 
-    this.orderService.createOrder(orderFormRequest)
+    const checkoutRequest: CheckoutRequest = {
+      payment: paymentRequest,
+      order: orderRequest
+    };
+
+    this.paymentService.processPayment(checkoutRequest)
       .subscribe({
-        next: () => {
+        next: (res) => {
+          console.log('Payment and order status:', res);
           this.cartService.cartResource.reload();
-
-          this.paymentService.processPayment(paymentRequest, orderFormRequest)
-            .subscribe({
-              next: (res) => {
-                console.log('Payment status:', res);
-                this.onPaymentSuccess();
-                if (onComplete) onComplete();
-              },
-              error: (err) => {
-                console.error('Payment error:', err);
-                if (onComplete) onComplete();
-              }
-            });
+          this.onPaymentSuccess();
+          if (onComplete) onComplete();
         },
-        error: () => {
+        error: (err) => {
+          console.error('Payment error:', err);
           if (onComplete) onComplete();
         }
       });
