@@ -26,6 +26,6 @@ export class CategoryService {
   }
 
   updateCategory(id: number, category: CategoryRequest) {
-    return this.http.put<CategoryResponse>(`${this.baseUrl}/$id}`, category);
+    return this.http.put<CategoryResponse>(`${this.baseUrl}/${id}`, category);
   }
 }
