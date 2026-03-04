@@ -33,10 +33,10 @@ I wanted to create something that felt user-friendly and elegant, but with the r
   
 🚦 Running the Project
 
-    Clone this repository and the [backend](https://github.com/osenpb/b_osenshop)
-    Install dependencies: npm install
-    Run development server: ng serve
-    Open http://localhost:4200 in your browser
+ 1. Clone this repository and the [backend](https://github.com/osenpb/b_osenshop)
+ 2. Install dependencies: npm install
+ 3. Run development server: ng serve
+ 4. Open http://localhost:4200 in your browser
 
 🎞️ Preview
   **(commint soon)**
