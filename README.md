@@ -1,4 +1,4 @@
-🃏 OsenShop
+## OsenShop
 
 A minimalist e-commerce built with Angular 20 and Tailwind. Features smooth, fast interactions, and reusable component architecture.
 
