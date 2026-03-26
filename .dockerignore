@@ -1,0 +1,16 @@
+node_modules
+.git
+.gitignore
+.vscode
+.angular
+dist
+*.spec.ts
+*.spec.js
+e2e
+coverage
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+*.env
+.env.*
