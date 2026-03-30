@@ -39,6 +39,7 @@ I wanted to create something that felt user-friendly and elegant, but with the r
  4. Open http://localhost:4200 in your browser
 
 ## Preview
-  **(comming soon)**
- 
+https://github.com/user-attachments/assets/fc1b9406-2b33-4213-851e-ab126e57165e
+
+
 
