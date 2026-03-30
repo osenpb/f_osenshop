@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ecommerce_frontend_angular": {
+    "osenshop": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ecommerce_frontend_angular:build:production"
+              "buildTarget": "osenshop:build:production"
             },
             "development": {
-              "buildTarget": "ecommerce_frontend_angular:build:development"
+              "buildTarget": "osenshop:build:development"
             }
           },
           "defaultConfiguration": "development"
